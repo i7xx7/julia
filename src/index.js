@@ -3,12 +3,15 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, GatewayIntentBits } = require('discord.js');
 const regis = require('./client/clientRegis')
+const dbIndex = require('./database/indexdb')
 const db =  require('mongoose')
 require('dotenv').config()
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
 // Handling De Comandos
+
+client.cooldowns = new Collection();
 client.commands = new Collection();
 
 const foldersPath = path.join(__dirname, 'commands');

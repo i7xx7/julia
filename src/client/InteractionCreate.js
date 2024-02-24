@@ -1,3 +1,7 @@
+
+const { Events, Collection } = require('discord.js');
+const user = require('../database/Schemas/user')
+=======
 const { Events } = require('discord.js');
 
 module.exports = {
@@ -5,7 +9,45 @@ module.exports = {
 	async execute(interaction) {
 		if (!interaction.isChatInputCommand()) return;
 
+
+		//  Obtendo o usuario na database que utilizou algum comando
+		let userData;
+		try {
+			userData = await user.findOne({ _id: interaction.user.id })
+			if(!userData){
+				userData = await user.create({
+					_id: interaction.user.id,
+					serverId: interaction.guild.id
+				})
+			}
+		} catch (err) {
+			console.log(`[DATABASE] Houve um erro ao tentar obter um user: ${err}`)
+		}
+
 		const command = interaction.client.commands.get(interaction.commandName);
+
+		// Cooldown systeam
+		const { cooldowns } = interaction.client;
+
+		if (!cooldowns.has(command.data.name)) {
+			cooldowns.set(command.data.name, new Collection());
+		}
+
+		const now = Date.now();
+		const timestamps = cooldowns.get(command.data.name);
+		const defaultCooldownDuration = 3;
+		const cooldownAmount = (command.cooldown ?? defaultCooldownDuration) * 1_000;
+
+		if (timestamps.has(interaction.user.id)) {
+			const expirationTime = timestamps.get(interaction.user.id) + cooldownAmount;
+			if (now < expirationTime) {
+				const expiredTimestamp = Math.round(expirationTime / 1_000);
+				return interaction.reply({ content: `Por favor espere <t:${expiredTimestamp}:R> para utilizar o comando ${command.data.name} novamente.`, ephemeral: true });
+			}
+		}
+		timestamps.set(interaction.user.id, now);
+		setTimeout(() => timestamps.delete(interaction.user.id), cooldownAmount);
+
 
 		if (!command) {
 			console.error(`O Comando: ${interaction.commandName} não foi encontrado..`);
@@ -13,6 +55,7 @@ module.exports = {
 		}
 
 		try {
+			await command.execute(interaction, userData);
 			await command.execute(interaction);
 		} catch (error) {
 			console.error(error);

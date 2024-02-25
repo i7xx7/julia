@@ -1,7 +1,8 @@
+const { Events, Collection } = require('discord.js');
+const user = require('../database/Schemas/user')
 
 const { Events, Collection } = require('discord.js');
 const user = require('../database/Schemas/user')
-=======
 const { Events } = require('discord.js');
 
 module.exports = {
@@ -9,8 +10,11 @@ module.exports = {
 	async execute(interaction) {
 		if (!interaction.isChatInputCommand()) return;
 
+		// Economia: Obtendo o usuario na database que utilizou algum comando
+
 
 		//  Obtendo o usuario na database que utilizou algum comando
+
 		let userData;
 		try {
 			userData = await user.findOne({ _id: interaction.user.id })
@@ -48,7 +52,6 @@ module.exports = {
 		timestamps.set(interaction.user.id, now);
 		setTimeout(() => timestamps.delete(interaction.user.id), cooldownAmount);
 
-
 		if (!command) {
 			console.error(`O Comando: ${interaction.commandName} não foi encontrado..`);
 			return;
@@ -56,6 +59,7 @@ module.exports = {
 
 		try {
 			await command.execute(interaction, userData);
+=======
 			await command.execute(interaction);
 		} catch (error) {
 			console.error(error);

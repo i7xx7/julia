@@ -1,4 +1,6 @@
 
+const { SlashCommandBuilder } = require('discord.js');
+
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 
 module.exports = {
@@ -35,6 +37,5 @@ module.exports = {
 		} else {
 			console.log('Nao')
 		}
-
 
 }};

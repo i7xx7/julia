@@ -1,3 +1,4 @@
+
 const { error } = require('console');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -10,7 +11,6 @@ require('dotenv').config()
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
 // Handling De Comandos
-
 client.cooldowns = new Collection();
 client.commands = new Collection();
 
@@ -45,6 +45,7 @@ for (const file of eventFiles) {
 	}
 }
 
+=======
 // Conexao com a Database
 db.connect(process.env.URLDB).then(() => {
 	console.log('[DATABASE] Conexão com database realizada com exito!')

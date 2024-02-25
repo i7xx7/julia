@@ -1,8 +1,11 @@
+
+const { error } = require('console');
 const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, GatewayIntentBits } = require('discord.js');
 const regis = require('./client/clientRegis')
 const dbIndex = require('./database/indexdb')
+const db =  require('mongoose')
 require('dotenv').config()
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
@@ -41,6 +44,14 @@ for (const file of eventFiles) {
 		client.on(event.name, (...args) => event.execute(...args));
 	}
 }
+
+=======
+// Conexao com a Database
+db.connect(process.env.URLDB).then(() => {
+	console.log('[DATABASE] Conexão com database realizada com exito!')
+}).catch((error) => {
+	console.log(`[DATABASE] Erro ao realizar conexao: ${error}`)
+})
 
 // Login
 client.login(process.env.TOKEN)

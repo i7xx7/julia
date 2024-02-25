@@ -1,12 +1,20 @@
 const { Events, Collection } = require('discord.js');
 const user = require('../database/Schemas/user')
 
+const { Events, Collection } = require('discord.js');
+const user = require('../database/Schemas/user')
+const { Events } = require('discord.js');
+
 module.exports = {
 	name: Events.InteractionCreate,
 	async execute(interaction) {
 		if (!interaction.isChatInputCommand()) return;
 
 		// Economia: Obtendo o usuario na database que utilizou algum comando
+
+
+		//  Obtendo o usuario na database que utilizou algum comando
+
 		let userData;
 		try {
 			userData = await user.findOne({ _id: interaction.user.id })
@@ -51,6 +59,8 @@ module.exports = {
 
 		try {
 			await command.execute(interaction, userData);
+=======
+			await command.execute(interaction);
 		} catch (error) {
 			console.error(error);
 			if (interaction.replied || interaction.deferred) {

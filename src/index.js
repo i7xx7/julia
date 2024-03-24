@@ -1,16 +1,47 @@
-
-const { error } = require('console');
 const fs = require('node:fs');
 const path = require('node:path');
-const { Client, Collection, GatewayIntentBits } = require('discord.js');
+const { Client, Collection, GatewayIntentBits, Partials, Events } = require('discord.js');
 const regis = require('./client/clientRegis')
 const dbIndex = require('./database/indexdb')
-const db =  require('mongoose')
+const moment =  require('moment')
+const ms = require('ms');
+require('moment-duration-format')
 require('dotenv').config()
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+const client = new Client({ 
+	intents: [
+	GatewayIntentBits.AutoModerationConfiguration,
+    GatewayIntentBits.AutoModerationExecution,
+    GatewayIntentBits.DirectMessageReactions,
+    GatewayIntentBits.DirectMessages,
+    GatewayIntentBits.GuildEmojisAndStickers,
+    GatewayIntentBits.GuildIntegrations,
+    GatewayIntentBits.GuildInvites,
+    GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.GuildMessageReactions,
+    GatewayIntentBits.GuildMessageTyping,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.GuildModeration,
+    GatewayIntentBits.GuildPresences,
+    GatewayIntentBits.GuildScheduledEvents,
+    GatewayIntentBits.GuildVoiceStates,
+    GatewayIntentBits.GuildWebhooks,
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.MessageContent
+	],
+	partials: [
+		Partials.Channel,
+		Partials.GuildMember,
+		Partials.GuildScheduledEvent,
+		Partials.Message,
+		Partials.Reaction,
+		Partials.ThreadMember,
+		Partials.User
+	]
 
-// Handling De Comandos
+});
+
+// Handling Commands
 client.cooldowns = new Collection();
 client.commands = new Collection();
 
@@ -45,12 +76,22 @@ for (const file of eventFiles) {
 	}
 }
 
-=======
-// Conexao com a Database
-db.connect(process.env.URLDB).then(() => {
-	console.log('[DATABASE] Conexão com database realizada com exito!')
-}).catch((error) => {
-	console.log(`[DATABASE] Erro ao realizar conexao: ${error}`)
+// Guild Users TempCalll
+client.on(Events.VoiceStateUpdate, (oldState, newState) => {
+
+	// moment.locale('pt-BR')
+	const oldChannel = oldState.channel;
+	const newChannel = newState.channel;
+
+	if(!oldChannel && newChannel){
+		console.log(`Contando tempo em call`)
+
+		return;
+	}
+	const temp = new Date().getTime()
+	const tempAll = moment.duration(temp).format('d [dias], h [horas], m [minutos], s [segundos]')
+	
+	console.log(`Saiu e ficou ${tempAll}`)
 })
 
 // Login

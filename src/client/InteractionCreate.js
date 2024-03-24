@@ -1,6 +1,5 @@
 const { Events, Collection } = require('discord.js');
 const user = require('../database/Schemas/user')
-
 const { Events, Collection } = require('discord.js');
 const user = require('../database/Schemas/user')
 const { Events } = require('discord.js');
@@ -11,8 +10,6 @@ module.exports = {
 		if (!interaction.isChatInputCommand()) return;
 
 		// Economia: Obtendo o usuario na database que utilizou algum comando
-
-
 		//  Obtendo o usuario na database que utilizou algum comando
 
 		let userData;
@@ -59,7 +56,6 @@ module.exports = {
 
 		try {
 			await command.execute(interaction, userData);
-=======
 			await command.execute(interaction);
 		} catch (error) {
 			console.error(error);

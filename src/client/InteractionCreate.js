@@ -1,69 +1,79 @@
-const { Events, Collection } = require('discord.js');
-const user = require('../database/Schemas/user')
-const { Events, Collection } = require('discord.js');
-const user = require('../database/Schemas/user')
-const { Events } = require('discord.js');
+const { Events, Collection } = require("discord.js");
+const user = require("../database/Schemas/user");
 
 module.exports = {
-	name: Events.InteractionCreate,
-	async execute(interaction) {
-		if (!interaction.isChatInputCommand()) return;
+  name: Events.InteractionCreate,
+  async execute(interaction) {
+    if (!interaction.isChatInputCommand()) return;
 
-		// Economia: Obtendo o usuario na database que utilizou algum comando
-		//  Obtendo o usuario na database que utilizou algum comando
+    // Economia: Obtendo o usuario na database que utilizou algum comando
+    //  Obtendo o usuario na database que utilizou algum comando
 
-		let userData;
-		try {
-			userData = await user.findOne({ _id: interaction.user.id })
-			if(!userData){
-				userData = await user.create({
-					_id: interaction.user.id,
-					serverId: interaction.guild.id
-				})
-			}
-		} catch (err) {
-			console.log(`[DATABASE] Houve um erro ao tentar obter um user: ${err}`)
-		}
+    let userData;
+    try {
+      userData = await user.findOne({ _id: interaction.user.id });
+      if (!userData) {
+        userData = await user.create({
+          _id: interaction.user.id,
+          serverId: interaction.guild.id,
+        });
+      }
+    } catch (err) {
+      console.log(`[DATABASE] Houve um erro ao tentar obter um user: ${err}`);
+    }
 
-		const command = interaction.client.commands.get(interaction.commandName);
+    const command = interaction.client.commands.get(interaction.commandName);
 
-		// Cooldown systeam
-		const { cooldowns } = interaction.client;
+    // Cooldown systeam
+    const { cooldowns } = interaction.client;
 
-		if (!cooldowns.has(command.data.name)) {
-			cooldowns.set(command.data.name, new Collection());
-		}
+    if (!cooldowns.has(command.data.name)) {
+      cooldowns.set(command.data.name, new Collection());
+    }
 
-		const now = Date.now();
-		const timestamps = cooldowns.get(command.data.name);
-		const defaultCooldownDuration = 3;
-		const cooldownAmount = (command.cooldown ?? defaultCooldownDuration) * 1_000;
+    const now = Date.now();
+    const timestamps = cooldowns.get(command.data.name);
+    const defaultCooldownDuration = 3;
+    const cooldownAmount =
+      (command.cooldown ?? defaultCooldownDuration) * 1_000;
 
-		if (timestamps.has(interaction.user.id)) {
-			const expirationTime = timestamps.get(interaction.user.id) + cooldownAmount;
-			if (now < expirationTime) {
-				const expiredTimestamp = Math.round(expirationTime / 1_000);
-				return interaction.reply({ content: `Por favor espere <t:${expiredTimestamp}:R> para utilizar o comando ${command.data.name} novamente.`, ephemeral: true });
-			}
-		}
-		timestamps.set(interaction.user.id, now);
-		setTimeout(() => timestamps.delete(interaction.user.id), cooldownAmount);
+    if (timestamps.has(interaction.user.id)) {
+      const expirationTime =
+        timestamps.get(interaction.user.id) + cooldownAmount;
+      if (now < expirationTime) {
+        const expiredTimestamp = Math.round(expirationTime / 1_000);
+        return interaction.reply({
+          content: `Por favor espere <t:${expiredTimestamp}:R> para utilizar o comando ${command.data.name} novamente.`,
+          ephemeral: true,
+        });
+      }
+    }
+    timestamps.set(interaction.user.id, now);
+    setTimeout(() => timestamps.delete(interaction.user.id), cooldownAmount);
 
-		if (!command) {
-			console.error(`O Comando: ${interaction.commandName} não foi encontrado..`);
-			return;
-		}
+    if (!command) {
+      console.error(
+        `O Comando: ${interaction.commandName} não foi encontrado..`,
+      );
+      return;
+    }
 
-		try {
-			await command.execute(interaction, userData);
-			await command.execute(interaction);
-		} catch (error) {
-			console.error(error);
-			if (interaction.replied || interaction.deferred) {
-			    await interaction.followUp({ content: 'Ocorreu um erro ao executar este comando...', ephemeral: true });
-			} else {
-				await interaction.reply({ content: 'Ocorreu um erro ao executar este comando...', ephemeral: true });
-			}
-		}
-	},
+    try {
+      await command.execute(interaction, userData);
+      await command.execute(interaction);
+    } catch (error) {
+      console.error(error);
+      if (interaction.replied || interaction.deferred) {
+        await interaction.followUp({
+          content: "Ocorreu um erro ao executar este comando...",
+          ephemeral: true,
+        });
+      } else {
+        await interaction.reply({
+          content: "Ocorreu um erro ao executar este comando...",
+          ephemeral: true,
+        });
+      }
+    }
+  },
 };

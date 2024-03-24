@@ -1,3 +1,4 @@
 node_modules
+myJsonDatabase
 .env
 json.sqlite

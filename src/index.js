@@ -1,12 +1,16 @@
-const fs = require('node:fs');
+const { 
+	Client, Collection, GatewayIntentBits, 
+	Partials, Events, ActionRowBuilder, StringSelectMenuBuilder, 
+	StringSelectMenuOptionBuilder, ButtonBuilder, ButtonStyle
+} = require('discord.js');
+const { painelVendas } = require('./myJsonDatabase/myChannels.json')
 const path = require('node:path');
-const { Client, Collection, GatewayIntentBits, Partials, Events } = require('discord.js');
-const regis = require('./client/clientRegis')
-const dbIndex = require('./database/indexdb')
-const moment =  require('moment')
-const ms = require('ms');
-require('moment-duration-format')
+const  fs  = require('node:fs');
+const { ClientRequest } = require('node:http');
+const internal = require('node:stream');
 require('dotenv').config()
+require('./client/clientRegis')
+require('./database/indexdb')
 
 const client = new Client({ 
 	intents: [
@@ -92,6 +96,88 @@ client.on(Events.VoiceStateUpdate, (oldState, newState) => {
 	const tempAll = moment.duration(temp).format('d [dias], h [horas], m [minutos], s [segundos]')
 	
 	console.log(`Saiu e ficou ${tempAll}`)
+})
+
+// Commmand Pannel Payments
+client.on("messageCreate", async (interaction) => {
+    if(interaction.content === '.painelvendas'){
+		const embed = {
+            color: 16777215,
+            title: 'Realizar a Compra do Painel',
+            description: '> Veja nossos planos e realize a compra semi-auto'
+        }
+
+        const select = new StringSelectMenuBuilder()
+			.setCustomId('pay')
+			.setPlaceholder('Selecione o Plano ⭣ ')
+			.setMaxValues(1)
+			.setMinValues(1)
+			.addOptions(
+				new StringSelectMenuOptionBuilder()
+					.setLabel('Plano Gold')
+					.setDescription('R$35.99 Por Mês.')
+				    .setValue('gold'),
+				new StringSelectMenuOptionBuilder()
+					.setLabel('Plano Classic')
+					.setDescription('R$15.99 Por Mês.')
+					.setValue('classic'),
+				new StringSelectMenuOptionBuilder()
+					.setLabel('Plano Basic')
+					.setDescription('R$10.99 Por Mês.')
+					.setValue('basic')
+			);
+
+        const row = new ActionRowBuilder().addComponents(select)
+        
+		await interaction.channel.send({ embeds: [embed], components: [row] });
+		interaction.delete()
+	}
+})
+
+// Commmand Painel Mines
+client.on("messageCreate", async (interaction) => {
+	if(interaction.content === '.painelmines'){
+
+		const user = interaction.author
+		const owner = await interaction.guild.fetchOwner()
+
+		if(interaction.author.id !== owner.id){
+			await interaction.reply({ content: `${user}, você não possui permissão para realizar esta ação`, ephemeral: true })
+		} else {
+			const reply = {
+				color: 16777215,
+				title: '💣 Mines 💎',
+				description: '- Verifique sempre os termos e condições para garantir uma experiência tranquila\n- Jogar com responsabilidade é fundamental para uma experiência positiva.'
+			}
+
+			const iniciar = new ButtonBuilder()
+			.setCustomId('iniciar')
+			.setLabel('Jogar')
+			.setStyle(ButtonStyle.Secondary);
+
+			const perfil = new ButtonBuilder()
+			.setCustomId('perfil')
+			.setLabel('Perfil')
+			.setStyle(ButtonStyle.Secondary);
+
+			const depositar = new ButtonBuilder()
+			.setCustomId('dep')
+			.setLabel('Depositar')
+			.setStyle(ButtonStyle.Success);
+
+			const sacar = new ButtonBuilder()
+			.setCustomId('sac')
+			.setLabel('Sacar')
+			.setStyle(ButtonStyle.Danger);
+
+			const row = new ActionRowBuilder().addComponents(iniciar, perfil, depositar, sacar);
+
+			await interaction.channel.send({ embeds: [reply], components: [row] })
+			await interaction.delete()
+			
+		}
+
+	}
 })
 
 // Login

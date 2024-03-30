@@ -6,10 +6,8 @@ const {
 const { painelVendas } = require('./myJsonDatabase/myChannels.json')
 const path = require('node:path');
 const  fs  = require('node:fs');
-const { ClientRequest } = require('node:http');
-const internal = require('node:stream');
 require('dotenv').config()
-require('./client/clientRegis')
+require('./events/client/clientRegis')
 require('./database/indexdb')
 
 const client = new Client({ 
@@ -66,37 +64,23 @@ for (const folder of commandFolders) {
 	}
 }
 
-// Handling De Eventos
-const eventsPath = path.join(__dirname, 'client');
-const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'));
+// Handling de Events
+const foldersEventsPath = path.join(__dirname, 'events')
+const eventsFolders =  fs.readdirSync(foldersEventsPath)
 
-for (const file of eventFiles) {
-	const filePath = path.join(eventsPath, file);
-	const event = require(filePath);
-	if (event.once) {
-		client.once(event.name, (...args) => event.execute(...args));
-	} else {
-		client.on(event.name, (...args) => event.execute(...args));
+for (const folder of eventsFolders) {
+	const eventsPath = path.join(foldersEventsPath, folder);
+	const eventsFoldersFile = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'));
+	for (const file of eventsFoldersFile) {
+		const filePath = path.join(eventsPath, file);
+		const event = require(filePath);
+		if (event.once) {
+			client.once(event.name, (...args) => event.execute(...args));
+		} else {
+			client.on(event.name, (...args) => event.execute(...args));
+		}
 	}
 }
-
-// Guild Users TempCalll
-client.on(Events.VoiceStateUpdate, (oldState, newState) => {
-
-	// moment.locale('pt-BR')
-	const oldChannel = oldState.channel;
-	const newChannel = newState.channel;
-
-	if(!oldChannel && newChannel){
-		console.log(`Contando tempo em call`)
-
-		return;
-	}
-	const temp = new Date().getTime()
-	const tempAll = moment.duration(temp).format('d [dias], h [horas], m [minutos], s [segundos]')
-	
-	console.log(`Saiu e ficou ${tempAll}`)
-})
 
 // Commmand Pannel Payments
 client.on("messageCreate", async (interaction) => {
@@ -138,7 +122,7 @@ client.on("messageCreate", async (interaction) => {
 client.on("messageCreate", async (interaction) => {
 	if(interaction.content === '.painelmines'){
 
-		const user = interaction.author
+		const user = interaction.user
 		const owner = await interaction.guild.fetchOwner()
 
 		if(interaction.author.id !== owner.id){
@@ -182,3 +166,5 @@ client.on("messageCreate", async (interaction) => {
 
 // Login
 client.login(process.env.TOKEN)
+process.on("uncaughtException", console.error)
+process.on("unhandledRejection", console.error)

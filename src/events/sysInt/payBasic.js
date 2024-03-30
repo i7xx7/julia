@@ -1,8 +1,8 @@
 const { Events, ChannelType, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js')
-const { staffRole, clientRole } = require('../myJsonDatabase/myRoles.json')
-const { logVendas } = require('../myJsonDatabase/myChannels.json')
-const { produtos, valores } = require('../myJsonDatabase/myProdutos.json')
-const { carrinho, clienteEmoji, dinheiro, books, server } = require('../myJsonDatabase/myEmojis.json')
+const { staffRole, clientRole } = require('../../myJsonDatabase/myRoles.json')
+const { logVendas } = require('../../myJsonDatabase/myChannels.json')
+const { produtos, valores } = require('../../myJsonDatabase/myProdutos.json')
+const { carrinho, clienteEmoji, dinheiro, books, server } = require('../../myJsonDatabase/myEmojis.json')
 const wait = require('node:timers/promises').setTimeout;
 const { QuickDB } = require("quick.db");
 const db = new QuickDB();
@@ -12,7 +12,7 @@ module.exports = {
 	async execute(interaction) {
         if(interaction.isStringSelectMenu()){
             
-            if(interaction.values == 'classic'){
+            if(interaction.values == 'basic'){
 
                 await interaction.reply({ content: `Aguarde....`, ephemeral: true })
                 
@@ -45,13 +45,13 @@ module.exports = {
                 }
 
                 const confirmpag = new ButtonBuilder()
-			        .setCustomId('confirmarpag2')
+			        .setCustomId('confirmarpag3')
 			        .setLabel('Confirmar Pagamento')
                     .setEmoji(server.allow)
 			        .setStyle(ButtonStyle.Success);
 
 			    const fecharcarr = new ButtonBuilder()
-			        .setCustomId('closecar2')
+			        .setCustomId('closecar3')
 			        .setLabel('Fechar Carrinho')
                     .setEmoji(server.reject)
 			        .setStyle(ButtonStyle.Danger);
@@ -68,7 +68,7 @@ module.exports = {
         }
 
         if(interaction.isButton()) {
-            if(interaction.customId === 'confirmarpag2') {
+            if(interaction.customId === 'confirmarpag3') {
 
                 if(interaction.member.roles.cache.has(staffRole)) {
 
@@ -82,7 +82,7 @@ module.exports = {
                         fields: [
                             {
                                 name: `${books} Detalhes Produto:`,
-                                value: ` \`\`\` Produto: ${produtos.produto2} | Valor: ${valores.valor2} \`\`\` `
+                                value: ` \`\`\` Produto: ${produtos.produto3} | Valor: ${valores.valor3} \`\`\` `
                             }
                         ],
                         timestamp: new Date().toISOString()
@@ -90,7 +90,7 @@ module.exports = {
                     }
 
                     const finalizar = new ButtonBuilder()
-			            .setCustomId('finalizar2')
+			            .setCustomId('finalizar3')
 			            .setLabel('Finalizar Atendimento')
 			            .setStyle(ButtonStyle.Danger);
 
@@ -105,7 +105,7 @@ module.exports = {
                 }
             }
 
-            else if(interaction.customId === 'closecar2') {
+            else if(interaction.customId === 'closecar3') {
 
                 if(interaction.member.roles.cache.has(staffRole)) {
 
@@ -121,7 +121,7 @@ module.exports = {
                     await interaction.reply({ content: `Você não pode realizar esta ação.`, ephemeral: true })
                 
                 }
-            } else if(interaction.customId === 'finalizar2'){
+            } else if(interaction.customId === 'finalizar3'){
                 const clientOwnerCard = await db.get(`carrinClient`)
                 const clientOwnerName = await db.get('nameClient')
                 const clientOwnerAvatar =  await db.get('avatarClient')
@@ -139,11 +139,11 @@ module.exports = {
                     fields: [
                         {
                             name: `Carrinho`,
-                            value: ` \`\`\` ${produtos.produto2} \`\`\` `
+                            value: ` \`\`\` ${produtos.produto3} \`\`\` `
                         },
                         {
                             name: `Valor Pago`,
-                            value: ` \`\`\` ${valores.valor2} \`\`\` `
+                            value: ` \`\`\` ${valores.valor3} \`\`\` `
                         }
 
                     ],

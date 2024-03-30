@@ -1,5 +1,5 @@
 const { Events, Collection } = require("discord.js");
-const user = require("../database/Schemas/user");
+const user = require("../../database/Schemas/user");
 
 module.exports = {
   name: Events.InteractionCreate,
@@ -60,7 +60,7 @@ module.exports = {
 
     try {
       await command.execute(interaction, userData);
-      await command.execute(interaction);
+      await command.execute(interaction, userData);
     } catch (error) {
       console.error(error);
       if (interaction.replied || interaction.deferred) {

@@ -7,7 +7,6 @@ module.exports = {
   async execute(interaction, userData) {
     const { coins } = userData;
     user = interaction.user;
-    console.log(userData.daily);
     const reply = {
       color: 16777215,
       description: `${user}, você possui atualmente ${coins} coins`,
@@ -17,6 +16,7 @@ module.exports = {
         icon_url: `${user.displayAvatarURL({ extension: "jpg" })}`,
       },
     };
+    
     await interaction.reply({ embeds: [reply], ephemeral: true });
   },
 };

@@ -16,5 +16,4 @@ module.exports = {
 			{ _id: user.id }, 
 			{ $set: { coins: coins + coinsDaily } } 
 		)
-		
 }};

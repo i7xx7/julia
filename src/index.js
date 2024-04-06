@@ -164,6 +164,8 @@ client.on("messageCreate", async (interaction) => {
 	}
 })
 
+
+
 // Login
 client.login(process.env.TOKEN)
 process.on("uncaughtException", console.error)

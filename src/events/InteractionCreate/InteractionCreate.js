@@ -60,7 +60,6 @@ module.exports = {
 
     try {
       await command.execute(interaction, userData);
-      await command.execute(interaction, userData);
     } catch (error) {
       console.error(error);
       if (interaction.replied || interaction.deferred) {

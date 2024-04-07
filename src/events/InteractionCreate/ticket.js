@@ -88,6 +88,7 @@ module.exports = {
                     const threadMessage = await threadChannel.messages.fetch(LastEmbedMessageId).then(msg => {
                         msg.edit({ embeds: [embedThread], components: [rowThread] })
                     })
+            
 
                     await interaction.reply({ ephemeral: true, content: 'Ticket Assumido com Sucesso!' })
                     await db.set(`threadstaff`, `${interaction.user.id}`)
@@ -130,7 +131,7 @@ module.exports = {
             if(values == 'staffnotify'){
                 const userId = await db.get(`threadowner`)
                 const LastEmbedMessageId = await db.get(`embedId`)
-                await interaction.client.users.send(`${user}`, `<@${user}> O Staff que assumiu seu ticket em https://discord.com/channels/${interaction.guild.id}/${interaction.channel.id} te Notificou.  `)
+                await interaction.client.users.send(`${userId}`, `<@${userId}> O Staff que assumiu seu ticket em https://discord.com/channels/${interaction.guild.id}/${interaction.channel.id} te Notificou.  `)
                 await interaction.reply({  ephemeral: true, content: 'Notificação Enviada com Sucesso!' })
             }
             else if(values == 'staffvoice'){
@@ -169,8 +170,9 @@ module.exports = {
     
                     const row = new ActionRowBuilder().addComponents(deleteCallThread, addPermCallThread, removePermCallThread)
     
-                    await interaction.reply({ components: [row], embeds: [embed] })
+                    const msg = await interaction.reply({ components: [row], embeds: [embed] })
                 })
+                
 
             }
         }
@@ -185,6 +187,7 @@ module.exports = {
                     const channelVoice = interaction.client.channels.cache.get(`${idVoiceInfos}`);
                     channelVoice.delete()
                     await interaction.reply({ ephemeral: true, content: 'Canal de Voz Deletado com Exitô!'})
+
                 }
                 else {
                     await interaction.reply({ ephemeral: true, content: 'Apenas um staff consegue realizar esta ação' });

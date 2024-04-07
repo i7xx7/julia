@@ -1,4 +1,4 @@
-const { Events, ButtonBuilder, ButtonStyle, ActionRowBuilder, ChannelType, StringSelectMenuBuilder, StringSelectMenuOptionBuilder } = require('discord.js')
+const { Events, ButtonBuilder, ButtonStyle, ActionRowBuilder, ChannelType, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ChannelFlagsBitField, PermissionsBitField, IntentsBitField, UserSelectMenuBuilder, } = require('discord.js')
 const { staffRole } = require('.././../myJsonDatabase/myRoles.json')
 const { QuickDB } = require("quick.db");
 const db = new QuickDB();
@@ -11,6 +11,7 @@ module.exports = {
             if(interaction.customId === 'openticket'){
 
                 await db.set(`threadowner`, `${interaction.user.id}`)
+                await db.set(`threadownerName`, `${interaction.user.username}`)
                 const threadMenuStaff = new ButtonBuilder().setCustomId('threadmenustaff').setLabel('Menu Staff').setStyle(ButtonStyle.Secondary)
                 const threadCloserTicket = new ButtonBuilder().setCustomId('threadclose').setLabel('Finalizar Ticket').setStyle(ButtonStyle.Secondary)
                 const threadStaff = new ButtonBuilder().setCustomId('threadstaff').setLabel('Assumir Ticket').setStyle(ButtonStyle.Secondary)
@@ -27,7 +28,6 @@ module.exports = {
                         }
                     ]
                 }
-                await db.set(`embedId_${interaction.user.id}`, `${embedThread.id}`)
                 await interaction.reply({ content: `Abrindo seu ticket aguarde alguns segundos...`, ephemeral: true })
                 
                 const thread = await interaction.channel.threads.create({
@@ -90,7 +90,7 @@ module.exports = {
                     })
 
                     await interaction.reply({ ephemeral: true, content: 'Ticket Assumido com Sucesso!' })
-                    await db.set(`threadstaff`)
+                    await db.set(`threadstaff`, `${interaction.user.id}`)
                 }
                 else {
                     await interaction.reply({ ephemeral: true, content: 'Apenas um staff consegue realizar esta ação' });
@@ -128,12 +128,90 @@ module.exports = {
             const values = interaction.values
 
             if(values == 'staffnotify'){
-                const user = await db.get(`threadowner`)
+                const userId = await db.get(`threadowner`)
                 const LastEmbedMessageId = await db.get(`embedId`)
                 await interaction.client.users.send(`${user}`, `<@${user}> O Staff que assumiu seu ticket em https://discord.com/channels/${interaction.guild.id}/${interaction.channel.id} te Notificou.  `)
                 await interaction.reply({  ephemeral: true, content: 'Notificação Enviada com Sucesso!' })
             }
             else if(values == 'staffvoice'){
+                const userId = await db.get(`threadowner`)
+                
+                const voiceThreadChannel = interaction.guild.channels.create({
+                    name: `🔊 ${userId}`,
+                    type: ChannelType.GuildVoice,
+                    parent: '1210320679472205824',
+                    permissionOverwrites: [
+                        {
+                            id: userId,
+                            allow: [PermissionsBitField.Flags.ViewChannel]
+                        },
+                        {
+                            id: staffRole,
+                            allow: [PermissionsBitField.Flags.ManageChannels]
+                        },
+                        {
+                            id: '959877345253150800',
+                            deny: [PermissionsBitField.Flags.ViewChannel]
+                        }
+                    ]
+                }).then(async (voice) => {
+        
+                    const info = await db.set(`voiceInfos`, voice)
+
+                    const embed = {
+                        color: 16777215,
+                        description: `Configurações do Canal: <#${voice.id}>`
+                    }
+    
+                    const deleteCallThread = new ButtonBuilder().setCustomId('deletecallthread').setLabel('Deletar Call').setStyle(ButtonStyle.Secondary)
+                    const addPermCallThread = new ButtonBuilder().setCustomId('addpermcallthread').setLabel('Adicionar Membro à Call').setStyle(ButtonStyle.Secondary)
+                    const removePermCallThread = new ButtonBuilder().setCustomId('removepermcallthread').setLabel('Remover Membro da Call').setStyle(ButtonStyle.Secondary)
+    
+                    const row = new ActionRowBuilder().addComponents(deleteCallThread, addPermCallThread, removePermCallThread)
+    
+                    await interaction.reply({ components: [row], embeds: [embed] })
+                })
+
+            }
+        }
+
+        if(interaction.isButton()){
+            if(interaction.customId === 'deletecallthread'){
+
+                if(interaction.member.roles.cache.has(staffRole)) {
+                    const voiceInfos = await db.get(`voiceInfos`)
+                    const idVoiceInfos = voiceInfos.id
+
+                    const channelVoice = interaction.client.channels.cache.get(`${idVoiceInfos}`);
+                    channelVoice.delete()
+                    await interaction.reply({ ephemeral: true, content: 'Canal de Voz Deletado com Exitô!'})
+                }
+                else {
+                    await interaction.reply({ ephemeral: true, content: 'Apenas um staff consegue realizar esta ação' });
+                }
+                
+            }
+            else if(interaction.customId === 'addpermcallthread'){
+                if(interaction.member.roles.cache.has(staffRole)) {
+                    const SelectUserPerm = new UserSelectMenuBuilder().setMaxValues(1).setCustomId('useraddperm').setPlaceholder('Selecione o Usuario ou Pesquise: ')
+                    const rowSelectUserPerm = new ActionRowBuilder().addComponents(SelectUserPerm)
+
+                    await interaction.reply({ ephemeral: true, components: [rowSelectUserPerm]})
+                }
+                else {
+                    await interaction.reply({ ephemeral: true, content: 'Apenas um staff consegue realizar esta ação' });
+                }
+            }
+            else if(interaction.customId === 'removepermcallthread'){
+                if(interaction.member.roles.cache.has(staffRole)) {
+                    const SelectUserPermRemove = new UserSelectMenuBuilder().setMaxValues(1).setCustomId('userremoveperm').setPlaceholder('Selecione o Usuario ou Pesquise: ')
+                    const rowSelectUserPermRemove = new ActionRowBuilder().addComponents(SelectUserPermRemove)
+
+                    await interaction.reply({ ephemeral: true, components: [rowSelectUserPermRemove]})
+                }
+                else {
+                    await interaction.reply({ ephemeral: true, content: 'Apenas um staff consegue realizar esta ação' });
+                }
 
             }
         }

@@ -6,6 +6,7 @@ const {
 const { painelVendas } = require('./myJsonDatabase/myChannels.json')
 const path = require('node:path');
 const  fs  = require('node:fs');
+const { server } = require('./myJsonDatabase/myEmojis.json')
 require('dotenv').config()
 require('./events/client/clientRegis')
 require('./database/indexdb')
@@ -164,7 +165,39 @@ client.on("messageCreate", async (interaction) => {
 	}
 })
 
+client.on("messageCreate", async (interaction) => {
+	if(interaction.content === '.painelticket'){
 
+		const embed = {
+			color: 16777215,
+			title: 'Abrir um Ticket',
+			description: 'Abra um ticket clicando no botao abaixo...',
+		  }
+	
+		  const OpenTicket = new ButtonBuilder().setCustomId('openticket').setLabel('Abrir Ticket').setStyle(ButtonStyle.Secondary)
+		  const row = new ActionRowBuilder().addComponents(OpenTicket)
+	
+		  await interaction.reply({ ephemeral: true, content: 'Painel enviado com sucesso!' })
+		  await interaction.channel.send({ components: [row], embeds: [embed] })
+
+	}
+})
+
+client.on("messageCreate", async (interaction) => {
+	if(interaction.content === '.painelwhitelist'){
+
+		const embed = {
+			color: 16777215,
+			description: 'Realize a whitelist para ser aprovado de acordo com suas respostas e ter acesso ao nosso servidor clicando no botão abaixo (Personalizavel)' 
+		  }
+	  
+		  const accomplishWhiteList = new ButtonBuilder().setLabel('Realizar Whitelist').setCustomId('accomplishwhitelist').setStyle(ButtonStyle.Secondary).setEmoji(`${server.list}`)
+		  const row = new ActionRowBuilder().addComponents(accomplishWhiteList)
+		  
+		  await interaction.channel.send({ content: 'Whitelist - Servidor RP (Personalizavel)', embeds: [embed], components: [row] })
+		  interaction.delete()
+	}
+})
 
 // Login
 client.login(process.env.TOKEN)

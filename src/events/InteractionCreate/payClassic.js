@@ -1,8 +1,8 @@
 const { Events, ChannelType, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js')
-const { staffRole, clientRole } = require('../../myJsonDatabase/myRoles.json')
-const { logVendas } = require('../../myJsonDatabase/myChannels.json')
-const { produtos, valores } = require('../../myJsonDatabase/myProdutos.json')
-const { carrinho, clienteEmoji, dinheiro, books, server } = require('../../myJsonDatabase/myEmojis.json')
+const { staffRole, clientRole } = require('../../database/Json/myRoles.json')
+const { logVendas } = require('../../database/Json/myChannels.json')
+const { produtos, valores } = require('../../database/Json/myProdutos.json')
+const { carrinho, books, server } = require('../../database/Json/myEmojis.json')
 const wait = require('node:timers/promises').setTimeout;
 const { QuickDB } = require("quick.db");
 const db = new QuickDB();

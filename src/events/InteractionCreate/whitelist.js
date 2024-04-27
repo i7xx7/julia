@@ -1,7 +1,6 @@
 const { Events, ModalBuilder, ActionRowBuilder, TextInputBuilder, TextInputStyle, ButtonBuilder, ButtonStyle } = require('discord.js')
-const { logsWhitelist } = require('../../myJsonDatabase/myChannels.json')
-const { server } = require('../../myJsonDatabase/myEmojis.json')
-const { whitelistP, whitelistA } = require('../../myJsonDatabase/myRoles.json')
+const { logsWhitelist } = require('../../database/Json/myChannels.json')
+const { whitelistP, whitelistA } = require('../../database/Json/myRoles.json')
 const { QuickDB } = require("quick.db");
 const db = new QuickDB();
 

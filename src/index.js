@@ -3,10 +3,9 @@ const {
 	Partials, Events, ActionRowBuilder, StringSelectMenuBuilder, 
 	StringSelectMenuOptionBuilder, ButtonBuilder, ButtonStyle
 } = require('discord.js');
-const { painelVendas } = require('./myJsonDatabase/myChannels.json')
 const path = require('node:path');
 const  fs  = require('node:fs');
-const { server } = require('./myJsonDatabase/myEmojis.json')
+const { server } = require('./database/Json/myEmojis.json')
 require('dotenv').config()
 require('./events/client/clientRegis')
 require('./database/indexdb')

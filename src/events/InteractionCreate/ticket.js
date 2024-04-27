@@ -1,5 +1,5 @@
 const { Events, ButtonBuilder, ButtonStyle, ActionRowBuilder, ChannelType, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ChannelFlagsBitField, PermissionsBitField, IntentsBitField, UserSelectMenuBuilder, } = require('discord.js')
-const { staffRole } = require('.././../myJsonDatabase/myRoles.json')
+const { staffRole } = require('.././../database/Json/myRoles.json')
 const { QuickDB } = require("quick.db");
 const db = new QuickDB();
 

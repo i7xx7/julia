@@ -1,5 +1,5 @@
 const { Events, AuditLogEvent } = require('discord.js');
-const { logAll } = require('../../myJsonDatabase/myChannels.json')
+const { logAll } = require('../../database/Json/myChannels.json')
 
 module.exports = {
 	name: Events.ChannelDelete,

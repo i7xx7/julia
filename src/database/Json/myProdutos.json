@@ -1,0 +1,12 @@
+{
+    "produtos": {
+        "produto1":"A",
+        "produto2":"B",
+        "produto3":"C"
+    },
+    "valores": {
+        "valor1":"A1",
+        "valor2":"B2",
+        "valor3":"C3"
+    }
+}

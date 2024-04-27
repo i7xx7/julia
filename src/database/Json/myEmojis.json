@@ -3,6 +3,11 @@
     "books":"📚",
     "server": {
         "allow":"<:allow:1065148306356977664> ",
-        "reject":"<:cancel:1065148075280171050>"
+        "reject":"<:cancel:1065148075280171050>",
+        "curtida":"<:j_coraobot:1233779545929285672>",
+        "comentar":"<:j_chatbot:1233779250474258493>",
+        "vercurtidas":"<:j_coraobot:1233780324110958603>",
+        "vercoments":"<:j_chatbot:1233780044820905984> ",
+        "deletepost":"<:j_lixobot:1233779687705153547>"
     }
 }
